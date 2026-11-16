@@ -1,0 +1,29 @@
+name: Build and test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build and test
+        run: ./build.sh
+      - name: Check dist/lbp-resource.js is up to date
+        run: |
+          if ! git diff --quiet -- dist/; then
+            echo "::warning::dist/lbp-resource.js differs from a fresh build; run ./build.sh and commit dist/"
+            git diff --stat -- dist/
+          fi

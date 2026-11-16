@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LBP resource tools</title>
+<style>
+  :root { --bg: #f6f6f4; --panel: #fff; --text: #1d1d1b; --muted: #66645e; --line: #d9d7d0; --accent: #2a5db0; --error: #b3261e; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #171716; --panel: #212120; --text: #ecebe7; --muted: #a29f97; --line: #3a3936; --accent: #8db4f5; --error: #f2b8b5; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  p.lead { color: var(--muted); margin: 0 0 20px; }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  h2 { font-size: 16px; margin: 0 0 8px; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+  button { font: inherit; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--text); cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+  button:disabled { opacity: .5; cursor: default; }
+  textarea { width: 100%; min-height: 260px; font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 8px; resize: vertical; }
+  #status { color: var(--muted); min-height: 1.5em; white-space: pre-wrap; }
+  #status.error { color: var(--error); }
+  input[type=file] { max-width: 100%; }
+</style>
+</head>
+<body>
+<main>
+  <h1>LBP resource tools</h1>
+  <p class="lead">Runs <code>decompress_resource</code>, <code>compress_resource</code>, <code>lbp_file_to_json</code> and
+    <code>json_to_lbp_file</code> from <code>dist/lbp-resource.js</code> on your file. Everything stays in this browser tab.</p>
+
+  <section>
+    <h2>1. Open a resource file</h2>
+    <div class="row">
+      <input type="file" id="file">
+    </div>
+    <div class="row">
+      <button id="to-json" class="primary" disabled>To JSON (lbp_file_to_json)</button>
+      <button id="decompress" disabled>Decompress (decompress_resource)</button>
+    </div>
+    <div id="status"></div>
+  </section>
+
+  <section>
+    <h2>2. Result</h2>
+    <p class="lead" id="hint">Pick a file above. JSON from <code>lbp_file_to_json</code> can be edited here and built back into a file.</p>
+    <textarea id="output" spellcheck="false"></textarea>
+    <div class="row">
+      <button id="from-json" class="primary">Build file from this JSON (json_to_lbp_file)</button>
+      <button id="compress">Build file from this info + payload (compress_resource)</button>
+      <button id="save-json">Save this text</button>
+      <button id="save-data" disabled>Save decompressed payload</button>
+    </div>
+  </section>
+</main>
+
+<script src="dist/lbp-resource.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  let fileName = "resource", fileData = null, payload = null;
+
+  function status(text, isError) {
+    $("status").textContent = text;
+    $("status").className = isError ? "error" : "";
+  }
+
+  function download(name, content, type) {
+    const blob = typeof content === "string" && type !== "application/json"
+      ? new Blob([LBPResource.toBytes(content, "data")], { type })
+      : new Blob([content], { type });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+
+  function run(label, fn) {
+    try {
+      const t = performance.now();
+      fn();
+      status(label + " took " + Math.round(performance.now() - t) + " ms.");
+    } catch (e) {
+      status(e.message || String(e), true);
+    }
+  }
+
+  $("file").addEventListener("change", async () => {
+    const f = $("file").files[0];
+    if (!f) return;
+    fileName = f.name;
+    fileData = new Uint8Array(await f.arrayBuffer());
+    $("to-json").disabled = $("decompress").disabled = false;
+    status(f.name + ": " + fileData.length + " bytes.");
+  });
+
+  $("to-json").addEventListener("click", () => run("lbp_file_to_json", () => {
+    $("output").value = JSON.stringify(lbp_file_to_json(fileData), null, 2);
+    $("hint").textContent = "The toolkit's JSON for " + fileName + ". Edit it and build a new file, or save it.";
+  }));
+
+  $("decompress").addEventListener("click", () => run("decompress_resource", () => {
+    const [data, info] = decompress_resource(fileData);
+    payload = data;
+    $("save-data").disabled = false;
+    $("output").value = JSON.stringify(info, null, 2);
+    $("hint").textContent = "Header info for " + fileName + " (" + data.length + " byte payload). Edit it and rebuild the file with the same payload, or save the payload.";
+  }));
+
+  $("from-json").addEventListener("click", () => run("json_to_lbp_file", () => {
+    const file = json_to_lbp_file($("output").value);
+    download(fileName.replace(/(\.[^.]*)?$/, "") + ".rebuilt" + (fileName.match(/\.[^.]*$/) || [""])[0], file, "application/octet-stream");
+  }));
+
+  $("compress").addEventListener("click", () => run("compress_resource", () => {
+    if (!payload) throw new Error("Decompress a file first, so there's a payload to compress.");
+    const file = compress_resource(payload, JSON.parse($("output").value));
+    download(fileName.replace(/(\.[^.]*)?$/, "") + ".rebuilt" + (fileName.match(/\.[^.]*$/) || [""])[0], file, "application/octet-stream");
+  }));
+
+  $("save-json").addEventListener("click", () => download(fileName + ".json", $("output").value, "application/json"));
+  $("save-data").addEventListener("click", () => download(fileName + ".data", payload, "application/octet-stream"));
+</script>
+</body>
+</html>

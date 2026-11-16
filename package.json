@@ -1,0 +1,14 @@
+{
+  "name": "lbp-resource-js",
+  "version": "0.1.0",
+  "description": "LittleBigPlanet resource files in plain JavaScript: decompress/compress and the toolkit's JSON, using cwlib compiled with TeaVM.",
+  "license": "MIT",
+  "main": "dist/lbp-resource.js",
+  "files": ["dist/", "js/", "README.md", "LICENSE", "THIRD_PARTY_NOTICES.md"],
+  "scripts": {
+    "bundle": "node scripts/bundle.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "repository": { "type": "git", "url": "https://github.com/Kalkoen31/lbp-resource-js" },
+  "private": true
+}
