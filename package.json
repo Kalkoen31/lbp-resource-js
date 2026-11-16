@@ -4,7 +4,7 @@
   "description": "LittleBigPlanet resource files in plain JavaScript: decompress/compress and the toolkit's JSON, using cwlib compiled with TeaVM.",
   "license": "MIT",
   "main": "dist/lbp-resource.js",
-  "files": ["dist/", "js/", "README.md", "LICENSE", "THIRD_PARTY_NOTICES.md"],
+  "files": ["dist/", "js/", "README.md", "LICENSE", "THIRD_PARTY_NOTICES.md", "licenses/"],
   "scripts": {
     "bundle": "node scripts/bundle.mjs",
     "test": "node --test test/*.test.mjs"

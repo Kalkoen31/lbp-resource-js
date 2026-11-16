@@ -20,7 +20,8 @@ const out = `/*! lbp-resource.js ${version} | decompress_resource, compress_reso
  * https://github.com/Kalkoen31/lbp-resource-js
  * Contains: cwlib (c) ennuo, MIT, https://github.com/ennuo/toolkit, compiled to JavaScript with TeaVM
  * (Apache-2.0, includes jzlib, BSD) together with parts of Gson (Apache-2.0) and JOML (MIT);
- * pako (c) Vitaly Puzrin and Andrei Tuputcyn, MIT and zlib licenses. See THIRD_PARTY_NOTICES.md.
+ * pako (c) Vitaly Puzrin and Andrei Tuputcyn, MIT and zlib licenses.
+ * License texts: https://github.com/Kalkoen31/lbp-resource-js/tree/main/licenses
  */
 (function (root) {
 var LBPResourcePako = (function () {

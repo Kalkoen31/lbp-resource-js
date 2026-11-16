@@ -16,6 +16,7 @@
   p.lead { color: var(--muted); margin: 0 0 20px; }
   section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
   h2 { font-size: 16px; margin: 0 0 8px; }
+  a { color: var(--accent); }
   code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
   .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
   button { font: inherit; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--text); cursor: pointer; }
@@ -31,7 +32,9 @@
 <main>
   <h1>LBP resource tools</h1>
   <p class="lead">Runs <code>decompress_resource</code>, <code>compress_resource</code>, <code>lbp_file_to_json</code> and
-    <code>json_to_lbp_file</code> from <code>dist/lbp-resource.js</code> on your file. Everything stays in this browser tab.</p>
+    <code>json_to_lbp_file</code> from <code>dist/lbp-resource.js</code> on your file. Everything stays in this browser tab.
+    Uses cwlib by ennuo (<a href="https://github.com/ennuo/toolkit">Craftworld Toolkit</a>), compiled to JavaScript with TeaVM.
+    <a href="https://github.com/Kalkoen31/lbp-resource-js">Source, docs and licenses</a>.</p>
 
   <section>
     <h2>1. Open a resource file</h2>

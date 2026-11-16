@@ -14,8 +14,9 @@ All four are synchronous. `file` and `data` are binary strings (one character
 per byte, 0 to 255, as `atob()` or `FileReader.readAsBinaryString()` give you)
 or `Uint8Array` / `ArrayBuffer`.
 
-Try it: open [`index.html`](index.html) in a browser (it works from a local
-folder too) and pick a resource file.
+Try it on the [demo page](https://kalkoen31.github.io/lbp-resource-js/), or open
+[`index.html`](index.html) from a local copy, and pick a resource file. Nothing
+is uploaded: the file stays in your browser.
 
 ## Using it
 
@@ -32,7 +33,9 @@ gzipped), with nothing else to load:
 </script>
 ```
 
-The functions are globals and also on `window.LBPResource`. In Node,
+The functions are globals and also on `window.LBPResource`. You can also load
+it straight from the demo site:
+`https://kalkoen31.github.io/lbp-resource-js/dist/lbp-resource.js`. In Node,
 `const api = require("./dist/lbp-resource.js")`.
 
 ### decompress_resource / compress_resource
@@ -162,10 +165,17 @@ Only made-up resources are used, no game files.
 
 ## Credits and licenses
 
-- cwlib and the Craftworld Toolkit by [ennuo](https://github.com/ennuo/toolkit), MIT.
-- Compiled with TeaVM (Apache-2.0). The output includes TeaVM's class library,
-  parts of Gson (Apache-2.0) and JOML (MIT).
-- pako (MIT and zlib licenses).
+- The resource formats, and everything the JSON functions do, come from
+  **cwlib** by **ennuo**, part of the [Craftworld Toolkit](https://github.com/ennuo/toolkit)
+  (MIT). This project only makes it run in a browser.
+- Compiled with [TeaVM](https://teavm.org/) (Apache-2.0). The output includes
+  TeaVM's class library (with JZlib, BSD), parts of
+  [Gson](https://github.com/google/gson) (Apache-2.0) and
+  [JOML](https://github.com/JOML-CI/JOML) (MIT).
+- [pako](https://github.com/nodeca/pako) for zlib in the hand-written functions
+  (MIT and zlib licenses).
 
-This project is MIT licensed, see [LICENSE](LICENSE) and
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+This project is MIT licensed, see [LICENSE](LICENSE). Third-party licenses and
+notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and
+[`licenses/`](licenses/). If you copy `dist/lbp-resource.js` into another
+project, keep its header comment, which names these licenses.
